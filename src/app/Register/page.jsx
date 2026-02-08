@@ -1,6 +1,6 @@
 "use client"
 
-import Signup from "./SignIn"
+import Signup from "./Signup"
 
 export default function Register(){
     return(

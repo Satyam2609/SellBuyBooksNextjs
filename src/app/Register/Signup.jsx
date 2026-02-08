@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Image2 from "../../assets/Image1.svg"; // Next.js me static import sahi hai
+
 
 const Signup = () => {
   const router = useRouter();
@@ -68,7 +68,7 @@ const Signup = () => {
         throw new Error(errData.message || "Signup failed");
       }
 
-      router.push("/signin"); // success ke baad redirect
+      router.push("/Register/login"); // success ke baad redirect
 
     } catch (err) {
       setError(err.message);
@@ -80,7 +80,7 @@ const Signup = () => {
   return (
     <div className="flex md:flex-row-reverse items-center justify-center min-h-screen bg-gray-100">
       <div className="hidden lg:flex md:w-8/12 lg:w-6/12">
-        <img src={Image2} alt="signup" />
+        <img src="/Image1.svg" alt="signup" />
       </div>
 
       <div className="w-full md:w-1/2 lg:w-1/3 bg-white shadow-lg p-8 rounded-md">
@@ -156,7 +156,7 @@ const Signup = () => {
 
           <p className="mt-4 text-center">
             Already have an account?{" "}
-            <a href="/signin" className="text-indigo-600">
+            <a href="/Register/login" className="text-indigo-600">
               Login
             </a>
           </p>
