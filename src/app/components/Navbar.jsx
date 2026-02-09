@@ -25,7 +25,7 @@ export default function Navbar() {
 
   const logout = async() => {
     try {
-      const res = await axios.put("http://localhost:4000/api/logout" , {} , {
+      const res = await axios.put(`${process.env.NEXT_PUBLIC_BOOK_URL}/api/logout` , {} , {
         withCredentials:true
       })
       router.push("/Register/login")
@@ -61,7 +61,7 @@ export default function Navbar() {
             <nav className="hidden w-full  lg:flex gap-6 text-sm font-medium">
               <Link href="/">Home</Link>
               <Link href="/products">New Arrivals</Link>
-              <Link href="/add-books">Exchange Books</Link>
+              <Link href="/SellOldBook">Exchange Books</Link>
             </nav>
           </div>
 
@@ -147,7 +147,7 @@ export default function Navbar() {
           <div className="lg:hidden py-4 space-y-3">
             <Link href="/" className="block">Home</Link>
             <Link href="/products" className="block">New Arrivals</Link>
-            <Link href="/add-books" className="block">Exchange Books</Link>
+            <Link href="/SellOldBook" className="block">Exchange Books</Link>
 
             {!user && (
               <>

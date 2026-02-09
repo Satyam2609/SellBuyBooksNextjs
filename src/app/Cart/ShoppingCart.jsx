@@ -25,7 +25,7 @@ const ShoppingCart = () => {
   useEffect(() => {
     const fetchdata = async() => {
       try {
-        const res = await axios.get("http://localhost:4000/api/getAllCart" , {
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_BOOK_URL}/api/getAllCart`, {
           withCredentials:true
         })
         setcart(res.data.cart.BookCart)
@@ -55,7 +55,7 @@ const ShoppingCart = () => {
 
   const handledelete = async (cartId) => {
   try {
-    await axios.delete("http://localhost:4000/api/deleteCart", {
+    await axios.delete(`${process.env.NEXT_PUBLIC_BOOK_URL}/api/deleteCart`, {
       data: { cartId },
       withCredentials: true,
     });

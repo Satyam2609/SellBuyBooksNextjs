@@ -23,9 +23,13 @@ export default function OrderPlacedForm({ onClose , amount , bookscarts}) {
         e.preventDefault()
         if (!cashfreeRef.current) 
             return alert("SDK not loaded"); 
-        const res = await axios.post("http://localhost:4000/api/create-order", { bookscarts ,  paymentdata},{
+        const res = await axios.post(`${process.env.NEXT_PUBLIC_BOOK_URL}/api/create-order`, 
+            { bookscarts ,  paymentdata},
+            {
             withCredentials:true
-        }); const { payment_session_id } = res.data; cashfreeRef.current.checkout({ paymentSessionId: payment_session_id, redirectTarget: "_modal" }); };
+        }); 
+        const { payment_session_id } = res.data; 
+        cashfreeRef.current.checkout({ paymentSessionId: payment_session_id, redirectTarget: "_modal" }); };
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       

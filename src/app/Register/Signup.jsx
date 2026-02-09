@@ -58,7 +58,7 @@ const Signup = () => {
         if (value) data.append(key, value);
       });
 
-      const res = await fetch("http://localhost:4000/api/Signup", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BOOK_URL}/api/Signup`, {
         method: "POST",
         body: data,
       });

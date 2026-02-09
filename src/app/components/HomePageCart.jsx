@@ -10,11 +10,11 @@ export default function Page() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get("http://localhost:4000/api/BookData", {
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_BOOK_URL}/api/BookData`, {
           withCredentials: true,
         });
         setBooksData(res.data.finddata);
-        console.log(res.data.finddata);
+        console.log("sdfdknfjnf",res.data.finddata);
       } catch (error) {
         console.log(error.response?.data?.message);
       }
@@ -25,7 +25,7 @@ export default function Page() {
   const addToCart = async (bookId) => {
     try {
       const res = await axios.post(
-        "http://localhost:4000/api/createdCart",
+        `${process.env.NEXT_PUBLIC_BOOK_URL}/api/createdCart`,
         { bookId, quantity: 1 },
         { withCredentials: true }
       );

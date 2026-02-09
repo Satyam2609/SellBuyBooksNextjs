@@ -11,7 +11,7 @@ export default function AuthProvider({children}){
     useEffect(() => {
         const fetchdata = async() => {
             try {
-                const res = await axios.get("http://localhost:4000/api/authprovider" , {
+                const res = await axios.get(`${process.env.NEXT_PUBLIC_BOOK_URL}/api/authprovider` , {
                     withCredentials:true
                 })
                 setuser(res.data.user)

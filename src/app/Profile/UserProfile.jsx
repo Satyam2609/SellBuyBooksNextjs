@@ -22,7 +22,7 @@ export default function UserProfile() {
   const fetchdata = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:4000/api/getProfile",
+        `${process.env.NEXT_PUBLIC_BOOK_URL}/api/getProfile`,
         { withCredentials: true }
       );
 
