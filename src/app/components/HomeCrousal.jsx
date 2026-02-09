@@ -16,8 +16,10 @@ const sliderData = [
       "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=2000&q=80",
     path: "/",
   },
+
+  
   {
-    image: "/boy.jpg", // public/boy.jpg me image rakho
+    image: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=2000&q=80",
     path: "/",
   },
   {
@@ -45,7 +47,6 @@ export default function HomeCrousal() {
         alt="banner"
         width={2000}
         height={800}
-        priority={index === 0}
         className="w-full h-[190px] lg:h-[33rem] object-cover"
       />
     </div>

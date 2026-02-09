@@ -4,18 +4,18 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { ShoppingBagIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
 
-export default function HomePageCart() {
+export default function EnginerringBook() {
   const [booksData, setBooksData] = useState([]);
   const [popup, setPopup] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_BOOK_URL}/api/BookData`, {
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_BOOK_URL}/api/engineeringBook`, {
           withCredentials: true,
         });
-        setBooksData(res.data.finddata);
-        console.log("Books data:", res.data.finddata);
+        setBooksData(res.data.findata);
+        console.log(res.data.findata);
       } catch (error) {
         console.log("Error fetching books:", error.response?.data?.message);
       }
@@ -54,7 +54,7 @@ export default function HomePageCart() {
     <div className="flex items-end justify-between mb-8">
       <div>
         <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
-          Latest Collection
+          Engineering Books
         </h2>
         <p className="mt-1 text-sm text-gray-500">
           Hand-picked pre-loved books at the best prices
