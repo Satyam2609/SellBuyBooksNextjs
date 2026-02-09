@@ -33,6 +33,7 @@ const ShoppingCart = () => {
 
         if (res.data?.cart?.BookCart) {
           setcart(res.data.cart.BookCart);
+          console.log(res.data.BookCart)
           setBookIds(
             res.data.cart.BookCart.map(i => ({
               bookId: i.bookId._id,
@@ -75,7 +76,7 @@ const ShoppingCart = () => {
   useEffect(() => {
     const total = cart.reduce(
       (sum, item) =>
-        sum + (item.bookId.discountPrice || item.bookId.originalPrice) * (item.quantity || 1), // Used discountPrice if available? checking data structure
+        sum + (item.bookId.originalPrice) * (item.quantity || 1), // Used discountPrice if available? checking data structure
       // Original code used `originalPrice`. Let's stick to original price logic unless `discountPrice` is better?
       // Original code: sum + item.bookId.originalPrice * item.quantity
       // But the display showed `discountedPrice` in one place?

@@ -145,14 +145,7 @@ export default function HomePageCart() {
                   <span className="text-sm text-gray-400 line-through">
                     ₹{book.originalPrice}
                   </span>
-                  <span className="text-xs font-semibold text-green-600">
-                    {Math.round(
-                      ((book.originalPrice - book.discountPrice) /
-                        book.originalPrice) *
-                        100
-                    )}
-                    % OFF
-                  </span>
+                 
                 </>
               )}
             </div>

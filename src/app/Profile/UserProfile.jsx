@@ -173,29 +173,59 @@ export default function UserProfile() {
 
               <div className="p-6">
                 {myBooks.length > 0 ? (
-                  <div className="flex overflow-x-hidden gap-4 justify-items-center">
-                    {myBooks.map((book) => (
-                      <div key={book._id} className="group w-full sm:w-[250px] md:w-[280px] lg:w-[300px] flex flex-col bg-white border border-slate-200 rounded-lg overflow-hidden hover:shadow-md transition">
-                        <div className="relative aspect-[3/4] bg-slate-100 overflow-hidden">
-                          <img src={book.image || "/placeholder.png"} alt={book.title} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                          <span className="absolute top-2 left-2 px-2 py-1 bg-white/90 text-[10px] font-semibold text-slate-700 rounded-md shadow-sm">
-                            {book.category || "Unknown"}
-                          </span>
-                        </div>
-                        <div className="p-4 flex flex-col flex-1">
-                          <h3 className="text-sm font-bold text-slate-900 line-clamp-1 mb-1" title={book.title}>{book.title}</h3>
-                          <p className="text-xs text-slate-500 mb-1">{book.author || "Unknown Author"}</p>
-                          <p className="text-xs text-slate-500 mb-3 line-clamp-3">{book.description || ""}</p>
-                          <div className="mt-auto flex items-center justify-between">
-                            <span className="text-sm font-bold text-slate-800">₹{book.price}</span>
-                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${book.condition?.toLowerCase() === 'new' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
-                              {book.condition || "Unknown"}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                  <div className="flex gap-4 overflow-x-auto pb-4 scroll-smooth scrollbar-hide">
+  {myBooks.map((book) => (
+    <div
+      key={book._id}
+      className="group flex-shrink-0 w-[220px] sm:w-[240px] md:w-[260px] lg:w-[280px] bg-white border border-slate-200 rounded-lg overflow-hidden hover:shadow-md transition"
+    >
+      <div className="relative aspect-[3/4] bg-slate-100 overflow-hidden">
+        <img
+          src={book.bookImage || "/placeholder.png"}
+          alt={book.title}
+          className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+        />
+        <span className="absolute top-2 left-2 px-2 py-1 bg-white/90 text-[10px] font-semibold text-slate-700 rounded-md shadow-sm">
+          {book.category || "Unknown"}
+        </span>
+      </div>
+
+      <div className="p-3 flex flex-col h-full">
+        <h3
+          className="text-sm font-bold text-slate-900 line-clamp-1 mb-1"
+          title={book.title}
+        >
+          {book.title}
+        </h3>
+
+        <p className="text-xs text-slate-500 mb-1">
+          {book.author || "Unknown Author"}
+        </p>
+
+        <p className="text-xs text-slate-500 mb-3 line-clamp-2">
+          {book.description || ""}
+        </p>
+
+        <div className="mt-auto flex items-center justify-between">
+          <span className="text-sm font-bold text-slate-800">
+            ₹{book.price}
+          </span>
+
+          <span
+            className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
+              book.condition?.toLowerCase() === "new"
+                ? "bg-emerald-100 text-emerald-700"
+                : "bg-amber-100 text-amber-700"
+            }`}
+          >
+            {book.condition || "Unknown"}
+          </span>
+        </div>
+      </div>
+    </div>
+  ))}
+</div>
+
                 ) : (
                   <div className="flex flex-col items-center justify-center py-12 text-center">
                     <div className="p-4 bg-slate-50 rounded-full mb-3">
