@@ -70,8 +70,8 @@ export default function Navbar() {
             <nav className="hidden lg:flex items-center gap-1 ml-4">
               {[
                 { name: 'Home', href: '/' },
-                { name: 'New Arrivals', href: '/products' },
-                { name: 'Exchange Books', href: '/SellOldBook' },
+                { name: 'Old Books', href: '/OldBooks' },
+                { name: 'Sell Books', href: '/SellOldBook' },
               ].map((link) => (
                 <Link
                   key={link.name}
