@@ -76,16 +76,7 @@ const ShoppingCart = () => {
   useEffect(() => {
     const total = cart.reduce(
       (sum, item) =>
-        sum + (item.bookId.originalPrice) * (item.quantity || 1), // Used discountPrice if available? checking data structure
-      // Original code used `originalPrice`. Let's stick to original price logic unless `discountPrice` is better?
-      // Original code: sum + item.bookId.originalPrice * item.quantity
-      // But the display showed `discountedPrice` in one place?
-      // Let's look: `item.discountedPrice` was used in `calculateTotal` (unused func)
-      // But `useEffect` used `item.bookId.originalPrice`.
-      // I will use `item.bookId.originalPrice` to be safe, but usually carts use the selling price.
-      // Let's use `originalPrice` for now to match behavior, but if `discountPrice` exists, it's better.
-      // I'll stick to what was rendering: `item.bookId.originalPrice`.
-      0
+        sum + (item.bookId.originalPrice) * (item.quantity || 1),  0
     );
     settotalPrice(total);
   }, [cart]);
