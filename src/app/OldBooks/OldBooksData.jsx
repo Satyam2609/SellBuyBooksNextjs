@@ -58,13 +58,13 @@ const addToCart = async (bookId) => {
     </div>
 
     {/* BOOKS */}
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4">
       {bookData?.map((book) => (
         <div
           key={book._id}
           className="
             snap-start
-            min-w-[290px] sm:min-w-[330px]
+            min-w-[110px] sm:min-w-[330px]
             bg-white
             rounded-xl
             border border-gray-200

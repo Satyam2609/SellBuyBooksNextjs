@@ -33,7 +33,7 @@ const ShoppingCart = () => {
 
         if (res.data?.cart?.BookCart) {
           setcart(res.data.cart.BookCart);
-          console.log(res.data.BookCart)
+          console.log("sfkmdfg",res.data.BookCart)
           setBookIds(
             res.data.cart.BookCart.map(i => ({
               bookId: i.bookId._id,
@@ -76,7 +76,8 @@ const ShoppingCart = () => {
   useEffect(() => {
     const total = cart.reduce(
       (sum, item) =>
-        sum + (item.bookId.originalPrice) * (item.quantity || 1),  0
+        sum + (item.bookId.originalPrice) * (item.quantity || 1), 
+ 0
     );
     settotalPrice(total);
   }, [cart]);

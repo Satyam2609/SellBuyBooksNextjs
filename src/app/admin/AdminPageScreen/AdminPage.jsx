@@ -13,9 +13,11 @@ import {
   EllipsisHorizontalIcon
 } from '@heroicons/react/24/outline';
 import axios from 'axios';
+import AdminAnalytics from './AdminAnalytics';
+import BookManage from './BookManage';
 
 const navigation = [
-  { name: 'Overview', icon: HomeIcon, href: '#', current: true },
+  { name: 'Account', icon: HomeIcon, href: '#', current: true },
   { name: 'Books Management', icon: BookOpenIcon, href: '#', current: false },
   { name: 'Users & Roles', icon: UsersIcon, href: '#', current: false },
   { name: 'Financials', icon: CurrencyDollarIcon, href: '#', current: false },
@@ -45,6 +47,7 @@ export default function AdminPage() {
   const [activeusers , setactiveusers] = useState()
   const [orderdata , setorderdata] = useState([])
   const [bookscount , setbookscount] = useState()
+  const [page , setpage] = useState("Account")
 
   useEffect(() => {
     const fetchdata = async() => {
@@ -115,7 +118,7 @@ export default function AdminPage() {
           {navigation.map((item) => (
             <button
               key={item.name}
-              onClick={() => setActiveTab(item.name)}
+              onClick={() => {setpage(item.name) , setActiveTab(item.name)}}
               className={classNames(
                 activeTab === item.name
                   ? 'bg-blue-50 text-blue-700 font-semibold'
@@ -144,7 +147,7 @@ export default function AdminPage() {
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+     { page === "Account" && <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
 
         {/* Header */}
         <header className="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-slate-200 flex items-center justify-between px-6 h-16 transition-shadow duration-200 hover:shadow-sm">
@@ -260,7 +263,7 @@ export default function AdminPage() {
                   </thead>
                   <tbody className="bg-white divide-y divide-slate-100">
                     {orderdata.map((order) => (
-                      <tr key={order.id} className="hover:bg-slate-50/80 transition-colors">
+                      <tr key={order._id} className="hover:bg-slate-50/80 transition-colors">
                         <div className="h-7 w-28 p-3 flex-shrink-0">
                               <img className="h-8 w-8 rounded-full" src={order.image} alt="" />
                             </div>
@@ -313,7 +316,9 @@ export default function AdminPage() {
 
           </div>
         </main>
-      </div>
+      </div>}
+      {page === "Analytics" && <AdminAnalytics/>}
+      {page === "Books Management" && <BookManage/>}
     </div>
   );
 }
