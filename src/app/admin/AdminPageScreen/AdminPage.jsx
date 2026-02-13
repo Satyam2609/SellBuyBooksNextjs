@@ -19,8 +19,6 @@ import BookManage from './BookManage';
 const navigation = [
   { name: 'Account', icon: HomeIcon, href: '#', current: true },
   { name: 'Books Management', icon: BookOpenIcon, href: '#', current: false },
-  { name: 'Users & Roles', icon: UsersIcon, href: '#', current: false },
-  { name: 'Financials', icon: CurrencyDollarIcon, href: '#', current: false },
   { name: 'Analytics', icon: ChartBarIcon, href: '#', current: false },
   { name: 'Settings', icon: Cog6ToothIcon, href: '#', current: false },
 ];
@@ -319,6 +317,7 @@ export default function AdminPage() {
       </div>}
       {page === "Analytics" && <AdminAnalytics/>}
       {page === "Books Management" && <BookManage/>}
+      
     </div>
   );
 }

@@ -133,7 +133,7 @@ const ShoppingCart = () => {
                       {/* Image */}
                       <div className="flex-shrink-0 h-28 w-24 rounded-lg overflow-hidden border border-gray-200 bg-gray-100 relative">
                         <img
-                          src={item.bookId.image}
+                          src={item.bookId?.image || item.bookId?.bookimage}
                           alt={item.bookId.title}
                           className="w-full h-full object-cover"
                         />

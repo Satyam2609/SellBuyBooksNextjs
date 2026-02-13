@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -12,6 +11,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { useAuth } from "../AuthProvider";
 import axios from "axios";
+
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
