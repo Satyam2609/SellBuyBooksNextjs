@@ -130,7 +130,7 @@ const addToCart = async (bookId) => {
                   </span>
             <div className="flex items-center gap-2 mt-3">
               <span className="text-lg font-bold text-gray-900">
-                ₹{book.price}
+                ₹{book.originalPrice}
               </span>
 
               

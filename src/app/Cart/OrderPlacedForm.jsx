@@ -17,6 +17,7 @@ export default function OrderPlacedForm({ onClose , amount , bookscarts}) {
         const {name , value} = e.target
         setpaymentdata((prev) => ({...prev , [name]:value}))
     }
+    console.log("sfkmsfg",bookscarts)
     const cashfreeRef = useRef(null);
      useEffect(() => { load({ mode: "sandbox" }).then((cf) => { cashfreeRef.current = cf; }); }, []);
       const handlePayment = async (e) => { 

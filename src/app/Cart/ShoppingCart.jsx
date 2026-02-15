@@ -31,24 +31,27 @@ const ShoppingCart = () => {
           withCredentials: true
         });
 
-        if (res.data?.cart?.BookCart) {
-          setcart(res.data.cart.BookCart);
-          console.log("sfkmdfg",res.data.BookCart)
-          setBookIds(
-            res.data.cart.BookCart.map(i => ({
-              bookId: i.bookId._id,
-              quantity: i.quantity
-            }))
-          );
-        }
+        setcart(res.data.data);
+
+        // Send actual book IDs and their quantities for payment
+        const bookDataForPayment = res.data.data.map((item) => ({
+          bookId: item._id,
+          quantity: item.quantity
+        }));
+        setBookIds(bookDataForPayment);
+
+        console.log("Mapped Data for Payment:", bookDataForPayment);
+
       } catch (error) {
         console.log(error.response?.data?.message);
       } finally {
         setLoading(false);
       }
     }
+
     fetchdata();
   }, []);
+
 
   const handledelete = async (cartId) => {
     try {
@@ -57,16 +60,9 @@ const ShoppingCart = () => {
         withCredentials: true,
       });
 
-      setcart(prev => prev.filter(item => item.bookId._id !== cartId));
-      setBookIds(prev => prev.filter(item => item.bookId._id !== cartId)); // Fixed: should filter by bookId._id matches cart's bookId._id logic or similar? 
-      // Actually previous logic was: setBookIds(prev => prev.filter(item => item.bookId.cartId !== cartId)); 
-      // Let's stick to the cart filtering logic which seems correct in the original code, but we update state directly instead of reload.
-      // The original code reloaded the page. Let's try to update state seamlessly.
-      // Correct logic: bookIds is derived from cart. If cart updates, we should update bookIds too, or just update cart and let derived state handle it?
-      // Since we update `setcart` above, let's also update setBookIds.
-      // Wait, original: `setBookIds(prev => prev.filter(item => item.bookId.cartId !== cartId))` looks weird because `bookId` usually is the book object, not containing `cartId`.
-      // Let's just re-calculate bookIds from the updated cart in the next render or update it here.
-      // Actually, simply removing from cart state is safer visual wise.
+      setcart(prev => prev.filter(item => item._id !== cartId));
+      setBookIds(prev => prev.filter(item => item._id !== cartId));
+
 
     } catch (error) {
       console.log(error.response?.data?.message);
@@ -76,8 +72,9 @@ const ShoppingCart = () => {
   useEffect(() => {
     const total = cart.reduce(
       (sum, item) =>
-        sum + (item.bookId.originalPrice) * (item.quantity || 1), 
- 0
+        sum + (item.originalPrice || item.price) * (item.quantity || 1),
+
+      0
     );
     settotalPrice(total);
   }, [cart]);
@@ -133,8 +130,8 @@ const ShoppingCart = () => {
                       {/* Image */}
                       <div className="flex-shrink-0 h-28 w-24 rounded-lg overflow-hidden border border-gray-200 bg-gray-100 relative">
                         <img
-                          src={item.bookId?.image || item.bookId?.bookimage}
-                          alt={item.bookId.title}
+                          src={item.image || item.bookImage}
+                          alt={item.title}
                           className="w-full h-full object-cover"
                         />
                       </div>
@@ -143,15 +140,15 @@ const ShoppingCart = () => {
                       <div className="flex-1 flex flex-col justify-between">
                         <div className="flex justify-between items-start">
                           <div>
-                            <h3 className="text-lg font-bold text-gray-900 line-clamp-1">{item.bookId.title}</h3>
-                            <p className="text-sm text-gray-500 mt-1">{item.bookId.brandName}</p>
+                            <h3 className="text-lg font-bold text-gray-900 line-clamp-1">{item.title}</h3>
+                            <p className="text-sm text-gray-500 mt-1">{item.brandName}</p>
                             <div className="inline-flex items-center px-2 py-1 rounded bg-gray-100 text-xs font-medium text-gray-600 mt-2">
-                              {item.bookId.condition} Condition
+                              {item.condition} Condition
                             </div>
                           </div>
 
                           <p className="text-lg font-bold text-gray-900">
-                            {formatPrice(item.bookId.originalPrice * (item.quantity || 1))}
+                            {formatPrice(item.originalPrice * (item.quantity || 1) || item.price * (item.quantity || 1))}
                           </p>
                         </div>
 
@@ -163,7 +160,7 @@ const ShoppingCart = () => {
 
                           {/* Remove Button */}
                           <button
-                            onClick={() => handledelete(item.bookId._id)}
+                            onClick={() => handledelete(item._id)}
                             className="flex items-center text-sm font-medium text-red-500 bg-white border border-red-500 hover:bg-red-50 px-3 py-1.5 rounded-lg transition"
                           >
                             <TrashIcon className="w-4 h-4 mr-1.5" />
