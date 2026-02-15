@@ -72,6 +72,7 @@ export default function Navbar() {
                 { name: 'Home', href: '/' },
                 { name: 'Old Books', href: '/OldBooks' },
                 { name: 'Sell Books', href: '/SellOldBook' },
+                { name: 'Ai Reccomendation', href: '/BookReccomendation' },
               ].map((link) => (
                 <Link
                   key={link.name}
@@ -196,8 +197,9 @@ export default function Navbar() {
         {menuOpen && (
           <div className="lg:hidden py-4 space-y-2 border-t border-gray-100 animate-in slide-in-from-top-2">
             <Link href="/" className="block px-3 py-2 text-base font-medium text-gray-700 rounded-md hover:bg-gray-50 hover:text-green-600">Home</Link>
-            <Link href="/products" className="block px-3 py-2 text-base font-medium text-gray-700 rounded-md hover:bg-gray-50 hover:text-green-600">New Arrivals</Link>
-            <Link href="/SellOldBook" className="block px-3 py-2 text-base font-medium text-gray-700 rounded-md hover:bg-gray-50 hover:text-green-600">Exchange Books</Link>
+            <Link href="/OldBooks" className="block px-3 py-2 text-base font-medium text-gray-700 rounded-md hover:bg-gray-50 hover:text-green-600">Old Books</Link>
+            <Link href="/SellOldBook" className="block px-3 py-2 text-base font-medium text-gray-700 rounded-md hover:bg-gray-50 hover:text-green-600">Sell Books</Link>
+            <Link href="/BookReccomendation" className="block px-3 py-2 text-base font-medium text-gray-700 rounded-md hover:bg-gray-50 hover:text-green-600">Ai Reccomendation</Link>
 
             {!user && (
               <div className="ml-3 mt-4 flex flex-col gap-2">
