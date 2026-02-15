@@ -3,23 +3,30 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
 import { ShoppingBagIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
+import { Loader2 } from "lucide-react";
 
 export default function OldBooksData(){
     const [bookData , setBookData] = useState()
      const [popup, setPopup] = useState(false);
+     const [loader , setloader] = useState(false)
 
 useEffect(() => {
     const fetchdata = async() => {
+      setloader(true)
         try {
             const res = await axios.get(`${process.env.NEXT_PUBLIC_BOOK_URL}/api/showSellBook`,{
                 withCredentials:true
             })
             setBookData(res.data.booksData)
             console.log(res.data.booksData)
+            setloader(false)
             
         } catch (error) {
             console.log(error.response?.data?.message)
-            
+            setloader(false)
+        }
+        finally{
+          setloader(false)
         }
     }
     fetchdata()
@@ -58,7 +65,7 @@ const addToCart = async (bookId) => {
     </div>
 
     {/* BOOKS */}
-    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4">
+   {loader ? <div className="w-full h-screen mb-10 flex justify-center"> <Loader2 size={50} className="animate-spin"/></div> : <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4">
       {bookData?.map((book) => (
         <div
           key={book._id}
@@ -143,7 +150,7 @@ const addToCart = async (bookId) => {
         </div>
       ))}
     </div>
-
+}
     {/* MOBILE VIEW ALL */}
     <div className="mt-6 text-center sm:hidden">
       <button className="text-sm font-semibold text-green-600">
