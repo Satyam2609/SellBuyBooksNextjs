@@ -13,7 +13,8 @@ const ShoppingCart = () => {
   const [totalPrice, settotalPrice] = useState(0); // Changed default to 0 number
   const [order, setorder] = useState(false);
   const [bookIds, setBookIds] = useState([]);
-  const [loading, setLoading] = useState(true); // Added loading state
+  const [loading, setLoading] = useState(true);
+  const {setcount , count} = useAuth() // Added loading state
 
   // Use a professional formatter for currency
   const formatPrice = (price) => {
@@ -39,8 +40,7 @@ const ShoppingCart = () => {
           quantity: item.quantity
         }));
         setBookIds(bookDataForPayment);
-
-        console.log("Mapped Data for Payment:", bookDataForPayment);
+        setcount(bookDataForPayment.length)
 
       } catch (error) {
         console.log(error.response?.data?.message);
@@ -50,7 +50,7 @@ const ShoppingCart = () => {
     }
 
     fetchdata();
-  }, []);
+  }, []); // Run only on mount
 
 
   const handledelete = async (cartId) => {
@@ -60,8 +60,10 @@ const ShoppingCart = () => {
         withCredentials: true,
       });
 
-      setcart(prev => prev.filter(item => item._id !== cartId));
-      setBookIds(prev => prev.filter(item => item._id !== cartId));
+      const updatedCart = cart.filter(item => item._id !== cartId);
+      setcart(updatedCart);
+      setBookIds(updatedCart.map(item => ({ bookId: item._id, quantity: item.quantity })));
+      setcount(Math.max(0, updatedCart.length));
 
 
     } catch (error) {

@@ -17,20 +17,11 @@ import AdminAnalytics from './AdminAnalytics';
 import BookManage from './BookManage';
 
 const navigation = [
-  { name: 'Account', icon: HomeIcon, href: '#', current: true },
+  { name: 'Dashboard', icon: HomeIcon, href: '#', current: true },
+  { name: 'Accounts', icon: UsersIcon, href: '#', current: false },
   { name: 'Books Management', icon: BookOpenIcon, href: '#', current: false },
   { name: 'Analytics', icon: ChartBarIcon, href: '#', current: false },
   { name: 'Settings', icon: Cog6ToothIcon, href: '#', current: false },
-];
-
-
-
-const recentOrders = [
-  { id: '#ORD-001', customer: 'Amit Kumar', book: 'React Interview Guide', date: 'Oct 24, 2025', status: 'Completed', amount: '₹450', avatar: 'https://ui-avatars.com/api/?name=Amit+Kumar&background=0D8ABC&color=fff' },
-  { id: '#ORD-002', customer: 'Priya Singh', book: 'Advanced Physics', date: 'Oct 24, 2025', status: 'Pending', amount: '₹620', avatar: 'https://ui-avatars.com/api/?name=Priya+Singh&background=F59E0B&color=fff' },
-  { id: '#ORD-003', customer: 'Rahul Verma', book: 'Chemistry Vol 1', date: 'Oct 23, 2025', status: 'Shipped', amount: '₹380', avatar: 'https://ui-avatars.com/api/?name=Rahul+Verma&background=10B981&color=fff' },
-  { id: '#ORD-004', customer: 'Sneha Gupta', book: 'History of India', date: 'Oct 23, 2025', status: 'Cancelled', amount: '₹210', avatar: 'https://ui-avatars.com/api/?name=Sneha+Gupta&background=EF4444&color=fff' },
-  { id: '#ORD-005', customer: 'Vikram Das', book: 'Mathematics Class 12', date: 'Oct 22, 2025', status: 'Completed', amount: '₹550', avatar: 'https://ui-avatars.com/api/?name=Vikram+Das&background=6366F1&color=fff' },
 ];
 
 function classNames(...classes) {
@@ -39,66 +30,83 @@ function classNames(...classes) {
 
 export default function AdminPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [activeTab, setActiveTab] = useState('Overview');
-  const [totalPrice , settotalPrice] = useState()
-  const [users , setusers] = useState()
-  const [activeusers , setactiveusers] = useState()
-  const [orderdata , setorderdata] = useState([])
-  const [bookscount , setbookscount] = useState()
-  const [page , setpage] = useState("Account")
+  const [activeTab, setActiveTab] = useState('Dashboard');
+  const [totalPrice, settotalPrice] = useState(0)
+  const [usersCount, setusersCount] = useState(0)
+  const [activeusers, setactiveusers] = useState(0)
+  const [orderdata, setorderdata] = useState([])
+  const [bookscount, setbookscount] = useState(0)
+  const [page, setpage] = useState("Dashboard")
+  const [allUsers, setAllUsers] = useState([])
+  const [loadingUsers, setLoadingUsers] = useState(false)
 
+  // Fetch Dashboard Stats
   useEffect(() => {
-    const fetchdata = async() => {
+    const fetchDashboardStats = async () => {
       try {
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_BOOK_URL}/api/ordersdatas`,{
-        withCredentials:true
-      })
-      setorderdata(res.data.findBooks)
-      setbookscount(res.data.booksCount)
-      
-    
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_BOOK_URL}/api/ordersDetails`, {
+          withCredentials: true
+        })
+        settotalPrice(res.data.total)
+        setusersCount(res.data.findUserCount)
+        setactiveusers(res.data.userActiveCount)
       } catch (error) {
-        console.log(error.response?.data?.message)
-        
+        console.log("Error fetching stats:", error.response?.data?.message)
       }
     }
-    fetchdata()
-  } , [])
-  
+    fetchDashboardStats()
+  }, [])
 
+  // Fetch Recent Transactions
+  useEffect(() => {
+    const fetchRecentTransactions = async () => {
+      try {
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_BOOK_URL}/api/ordersdatas`, {
+          withCredentials: true
+        })
+        setorderdata(res.data.findBooks)
+        setbookscount(res.data.booksCount)
+      } catch (error) {
+        console.log("Error fetching transactions:", error.response?.data?.message)
+      }
+    }
+    fetchRecentTransactions()
+  }, [])
+
+  // Fetch All Users when in Accounts tab
+  useEffect(() => {
+    if (page === "Accounts") {
+      const fetchUsers = async () => {
+        setLoadingUsers(true)
+        try {
+          const res = await axios.get(`${process.env.NEXT_PUBLIC_BOOK_URL}/api/allUsers`, {
+            withCredentials: true
+          })
+          if (res.data.success) {
+            setAllUsers(res.data.users)
+          }
+        } catch (error) {
+          console.error("Error fetching users:", error)
+        } finally {
+          setLoadingUsers(false)
+        }
+      }
+      fetchUsers()
+    }
+  }, [page])
 
   const stats = [
-  { name: 'Total Revenue', value: totalPrice, change: '+20.1%', trend: 'up', icon: CurrencyDollarIcon },
-  { name: 'Total Users', value: users, change: '+15.1%', trend: 'up', icon: UsersIcon },
-  { name: 'Active User', value: activeusers, change: '-3.2%', trend: 'down', icon: BookOpenIcon },
-  { name: 'Totals Book', value: bookscount, change: 'Requires Action', trend: 'neutral', icon: BellIcon },
-];
-
-  useEffect(() => {
-    const fetchdata = async() => {
-      try {
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_BOOK_URL}/api/ordersDetails`,{
-        withCredentials:true
-      })
-      settotalPrice(res.data.total)
-      setusers(res.data.findUserCount)
-      setactiveusers(res.data.userActiveCount)
-      console.log(res.data.findUserCount)
-      } catch (error) {
-        console.log(error.response?.data?.message)
-        
-      }
-    }
-    fetchdata()
-  } , [])
+    { name: 'Total Revenue', value: `₹${totalPrice?.toLocaleString()}`, trend: 'up', icon: CurrencyDollarIcon },
+    { name: 'Total Users', value: usersCount, trend: 'up', icon: UsersIcon },
+    { name: 'Active User', value: activeusers, trend: 'down', icon: BookOpenIcon },
+    { name: 'Totals Book', value: bookscount, trend: 'neutral', icon: BellIcon },
+  ];
 
   return (
-    <div className="min-h-screen bg-slate-50 flex font-sans text-slate-900 selection:bg-blue-100 selection:text-blue-900">
-
+    <div className="min-h-screen bg-slate-50 flex font-sans text-slate-900">
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 shadow-[4px_0_24px_rgba(0,0,0,0.02)] ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-          }`}
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 shadow-[4px_0_24px_rgba(0,0,0,0.02)] ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
       >
         <div className="h-16 flex items-center px-6 border-b border-slate-100">
           <div className="flex items-center space-x-2">
@@ -110,13 +118,11 @@ export default function AdminPage() {
         </div>
 
         <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
-          <div className="mb-4 px-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
-            Main Menu
-          </div>
+          <div className="mb-4 px-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">Main Menu</div>
           {navigation.map((item) => (
             <button
               key={item.name}
-              onClick={() => {setpage(item.name) , setActiveTab(item.name)}}
+              onClick={() => { setpage(item.name); setActiveTab(item.name); }}
               className={classNames(
                 activeTab === item.name
                   ? 'bg-blue-50 text-blue-700 font-semibold'
@@ -144,46 +150,34 @@ export default function AdminPage() {
         </div>
       </aside>
 
-      {/* Main Content */}
-     { page === "Account" && <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Header */}
-        <header className="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-slate-200 flex items-center justify-between px-6 h-16 transition-shadow duration-200 hover:shadow-sm">
+        <header className="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-slate-200 flex items-center justify-between px-6 h-16 shadow-sm">
           <div className="flex items-center flex-1">
-            <button
-              className="lg:hidden p-2 -ml-2 mr-2 text-slate-500 hover:text-slate-700"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-            >
+            <button className="lg:hidden p-2 -ml-2 mr-2 text-slate-500 hover:text-slate-700" onClick={() => setSidebarOpen(!sidebarOpen)}>
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
-
-            {/* Search Bar */}
             <div className="w-full max-w-lg lg:max-w-xs relative hidden sm:block">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <MagnifyingGlassIcon className="h-4 w-4 text-slate-400" />
               </div>
-              <input
-                type="text"
-                className="block w-full pl-9 pr-3 py-1.5 border border-slate-200 rounded-full leading-5 bg-slate-50 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white sm:text-sm transition-all duration-200"
-                placeholder="Search..."
-              />
+              <input type="text" className="block w-full pl-9 pr-3 py-1.5 border border-slate-200 rounded-full bg-slate-50 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 sm:text-sm" placeholder="Search..." />
             </div>
           </div>
-
           <div className="flex items-center space-x-4">
-            <button className="p-2 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors relative">
+            <button className="p-2 rounded-full text-slate-400 hover:text-slate-600 relative">
               <BellIcon className="h-5 w-5" />
               <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
             </button>
-
             <div className="flex items-center space-x-3 pl-4 border-l border-slate-200">
               <div className="text-right hidden md:block">
                 <p className="text-sm font-semibold text-slate-900">Admin User</p>
                 <p className="text-xs text-slate-500">Super Admin</p>
               </div>
-              <div className="h-9 w-9 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-600 p-[2px] cursor-pointer ring-2 ring-transparent hover:ring-blue-100 transition-all">
+              <div className="h-9 w-9 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center p-[2px] cursor-pointer">
                 <div className="h-full w-full rounded-full bg-white flex items-center justify-center overflow-hidden">
                   <span className="text-xs font-bold text-blue-600">AD</span>
                 </div>
@@ -192,132 +186,134 @@ export default function AdminPage() {
           </div>
         </header>
 
-        {/* content scrollable area */}
+        {/* Scrollable View Area */}
         <main className="flex-1 overflow-y-auto bg-slate-50 p-6 lg:p-8">
+          <div className="max-w-7xl mx-auto">
 
-          <div className="max-w-7xl mx-auto space-y-8">
-            {/* Page Title & Actions */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Overview</h1>
-                <p className="text-sm text-slate-500 mt-1">Global performance metrics for today.</p>
-              </div>
-              <div className="flex space-x-3">
-                <button className="inline-flex items-center px-4 py-2 border border-slate-300 shadow-sm text-sm font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
-                  Export
-                </button>
-                <button className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
-                  Add New Book
-                </button>
-              </div>
-            </div>
+            {/* 1. Dashboard Page */}
+            {page === "Dashboard" && (
+              <div className="space-y-8 animate-in fade-in duration-500">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Overview</h1>
+                    <p className="text-sm text-slate-500 mt-1">Global performance metrics for today.</p>
+                  </div>
+                  <div className="flex space-x-3">
+                    <button className="px-4 py-2 border border-slate-300 text-sm font-medium rounded-lg bg-white hover:bg-slate-50 shadow-sm transition-colors">Export</button>
+                    <button className="px-4 py-2 text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition-colors">Add New Book</button>
+                  </div>
+                </div>
 
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {stats.map((item) => (
-                <div key={item.name} className="relative bg-white pt-5 px-4 pb-12 sm:pt-6 sm:px-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] rounded-2xl border border-slate-100 overflow-hidden group hover:border-blue-100 transition-colors">
-                  <dt>
-                    <div className={`absolute rounded-xl p-3 ${item.trend === 'up' ? 'bg-green-50' :
-                        item.trend === 'down' ? 'bg-red-50' : 'bg-blue-50'
-                      }`}>
-                      <item.icon className={`h-6 w-6 ${item.trend === 'up' ? 'text-green-600' :
-                          item.trend === 'down' ? 'text-red-600' : 'text-blue-600'
-                        }`} aria-hidden="true" />
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                  {stats.map((item) => (
+                    <div key={item.name} className="bg-white p-6 shadow-sm rounded-2xl border border-slate-100 relative group transition-all hover:border-blue-100">
+                      <div className="absolute top-6 right-6 p-2 rounded-xl bg-blue-50 text-blue-600 group-hover:scale-110 transition-transform">
+                        <item.icon className="h-6 w-6" />
+                      </div>
+                      <dt className="text-sm font-medium text-slate-500 uppercase tracking-widest">{item.name}</dt>
+                      <dd className="text-2xl font-black text-slate-900 mt-2">{item.value}</dd>
                     </div>
-                    <p className="ml-16 text-sm font-medium text-slate-500 truncate">{item.name}</p>
-                  </dt>
-                  <dd className="ml-16 pb-1 flex items-baseline sm:pb-2">
-                    <p className="text-2xl font-semibold text-slate-900">{item.value}</p>
-                    
-                  </dd>
+                  ))}
                 </div>
-              ))}
-            </div>
 
-            {/* Recent Orders Section */}
-            <div className="bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] rounded-2xl border border-slate-100 overflow-hidden">
-              <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                <div>
-                  <h3 className="text-lg leading-6 font-semibold text-slate-900">Recent Transactions</h3>
-                  <p className="text-xs text-slate-500 mt-1">Latest book orders from customers.</p>
-                </div>
-                <button className="text-sm font-medium text-blue-600 hover:text-blue-500 transition-colors">
-                  View all
-                </button>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="min-w-full whitespace-nowrap text-left">
-                  <thead className="bg-slate-50 text-slate-500">
-                    <tr>
-                      
-                      <th scope="col" className="px-6 py-3 text-xs font-semibold uppercase tracking-wider">BookImage</th>
-                      <th scope="col" className="px-6 py-3 text-xs font-semibold uppercase tracking-wider">Book Name</th>
-                      <th scope="col" className="px-6 py-3 text-xs font-semibold uppercase tracking-wider">Book Condition</th>
-                      <th scope="col" className="px-6 py-3 text-xs font-semibold uppercase tracking-wider">Book Category</th>
-                      <th scope="col" className="px-6 py-3 text-xs font-semibold uppercase tracking-wider">Discount Price</th>
-                      <th scope="col" className="px-6 py-3 text-xs font-semibold uppercase tracking-wider text-right">Amount</th>
-                      <th scope="col" className="relative px-6 py-3"><span className="sr-only">Actions</span></th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-slate-100">
-                    {orderdata.map((order) => (
-                      <tr key={order._id} className="hover:bg-slate-50/80 transition-colors">
-                        <div className="h-7 w-28 p-3 flex-shrink-0">
-                              <img className="h-8 w-8 rounded-full" src={order.image} alt="" />
-                            </div>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center">
-                            <div className="ml-3">
-                              <div className="text-sm font-medium text-slate-900">{order.title}</div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-sm text-slate-600 max-w-xs truncate">{order.condition}</td>
-                        <td className="px-6 py-4">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize`}>
-                            {order.category}
-                            
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-sm text-slate-500">{order.discountPrice}</td>
-                        <td className="px-6 py-4 text-sm font-medium text-slate-900 text-right">{order.originalPrice}</td>
-                        <td className="px-6 py-4 text-right text-sm font-medium">
-                          <button className="text-slate-400 hover:text-slate-600">
-                            <EllipsisHorizontalIcon className="h-5 w-5" />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              {/* Pagination Footer (Optional) */}
-              <div className="bg-white px-4 py-3 border-t border-slate-100 flex items-center justify-between sm:px-6">
-                <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                  <div>
-                    <p className="text-sm text-slate-500">
-                      Showing <span className="font-medium">1</span> to <span className="font-medium">5</span> of <span className="font-medium">20</span> results
-                    </p>
+                <div className="bg-white shadow-sm rounded-2xl border border-slate-100 overflow-hidden">
+                  <div className="px-6 py-5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                    <h3 className="text-lg font-bold text-slate-900">Recent Transactions</h3>
+                    <button className="text-sm font-bold text-blue-600 hover:text-blue-500">View all</button>
                   </div>
-                  <div>
-                    <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                      <a href="#" className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-slate-300 bg-white text-sm font-medium text-slate-500 hover:bg-slate-50">Previous</a>
-                      <a href="#" className="relative inline-flex items-center px-4 py-2 border border-slate-300 bg-white text-sm font-medium text-slate-700 hover:bg-slate-50">1</a>
-                      <a href="#" className="relative inline-flex items-center px-4 py-2 border border-slate-300 bg-white text-sm font-medium text-slate-700 hover:bg-slate-50">2</a>
-                      <a href="#" className="relative inline-flex items-center px-4 py-2 border border-slate-300 bg-white text-sm font-medium text-slate-700 hover:bg-slate-50">3</a>
-                      <a href="#" className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-slate-300 bg-white text-sm font-medium text-slate-500 hover:bg-slate-50">Next</a>
-                    </nav>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                      <thead className="bg-slate-50 text-slate-400 text-[10px] font-black uppercase tracking-widest">
+                        <tr>
+                          <th className="px-6 py-4">Book</th>
+                          <th className="px-6 py-4">Condition</th>
+                          <th className="px-6 py-4">Category</th>
+                          <th className="px-6 py-4 text-right">Amount</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {orderdata.map((order) => (
+                          <tr key={order._id} className="hover:bg-slate-50 transition-colors">
+                            <td className="px-6 py-4 flex items-center space-x-3">
+                              <img className="h-10 w-8 object-cover rounded shadow-sm" src={order.image} alt="" />
+                              <span className="text-sm font-bold text-slate-900">{order.title}</span>
+                            </td>
+                            <td className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest">{order.condition}</td>
+                            <td className="px-6 py-4">
+                              <span className="px-2 py-1 rounded-md bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest">{order.category}</span>
+                            </td>
+                            <td className="px-6 py-4 text-right font-black text-slate-900">₹{order.originalPrice}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
 
+            {/* 2. Admin Analytics Page */}
+            {page === "Analytics" && <AdminAnalytics />}
+
+            {/* 3. Books Management Page */}
+            {page === "Books Management" && <BookManage />}
+
+            {/* 4. Accounts (User Management) Page */}
+            {page === "Accounts" && (
+              <div className="space-y-8 animate-in fade-in duration-500">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <h1 className="text-2xl font-bold text-slate-900 tracking-tight">User Accounts</h1>
+                    <p className="text-sm text-slate-500 mt-1">Manage and view all registered customers.</p>
+                  </div>
+                  <div className="relative w-full sm:w-64">
+                    <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                    <input type="text" className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-xl bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20" placeholder="Search users..." />
+                  </div>
+                </div>
+
+                <div className="bg-white shadow-xl shadow-slate-200/50 rounded-3xl border border-slate-100 overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                      <thead className="bg-slate-50/50 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                        <tr>
+                          <th className="px-6 py-5">User Profile</th>
+                          <th className="px-6 py-5">Email Address</th>
+                          <th className="px-6 py-5">Status</th>
+                          <th className="px-6 py-5 text-right">Join Date</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-50">
+                        {loadingUsers ? (
+                          <tr>
+                            <td colSpan="4" className="px-6 py-12 text-center text-slate-400 font-bold uppercase tracking-widest">Loading Users...</td>
+                          </tr>
+                        ) : allUsers.map((user, idx) => (
+                          <tr key={idx} className="hover:bg-blue-50/30 transition-colors group">
+                            <td className="px-6 py-5 flex items-center space-x-4">
+                              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center text-white font-black text-sm shadow-lg shadow-indigo-100">
+                                {user.fullname?.charAt(0).toUpperCase()}
+                              </div>
+                              <div className="font-black text-slate-800 uppercase tracking-tight">{user.fullname}</div>
+                            </td>
+                            <td className="px-6 py-5 text-sm font-medium text-slate-600 lowercase">{user.email}</td>
+                            <td className="px-6 py-5">
+                              <span className="px-3 py-1 bg-green-50 text-green-600 text-[10px] font-black rounded-lg uppercase tracking-widest">Active</span>
+                            </td>
+                            <td className="px-6 py-5 text-right text-sm font-bold text-slate-400">
+                              {new Date(user.createdAt).toLocaleDateString()}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </main>
-      </div>}
-      {page === "Analytics" && <AdminAnalytics/>}
-      {page === "Books Management" && <BookManage/>}
-      
+      </div>
     </div>
   );
 }

@@ -15,7 +15,7 @@ export default function MedicalBook() {
           withCredentials: true,
         });
         setBooksData(res.data.findata);
-        console.log(res.data.findata);
+        console.log("medical",res.data.findata);
       } catch (error) {
         console.log("Error fetching books:", error.response?.data?.message);
       }

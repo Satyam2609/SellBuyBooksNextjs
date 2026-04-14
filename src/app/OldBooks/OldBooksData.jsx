@@ -4,8 +4,10 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 import { ShoppingBagIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
 import { Loader2 } from "lucide-react";
+import { useAuth } from "../AuthProvider";
 
 export default function OldBooksData(){
+    const { setcount } = useAuth();
     const [bookData , setBookData] = useState()
      const [popup, setPopup] = useState(false);
      const [loader , setloader] = useState(false)
@@ -39,6 +41,7 @@ const addToCart = async (bookId) => {
         { withCredentials: true }
       );
       console.log("Added to cart", res.data);
+      setcount((prev) => prev + 1);
       setPopup(true);
     } catch (error) {
       console.log("Error adding to cart:", error.response?.data?.message || error.message);

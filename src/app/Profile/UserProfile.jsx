@@ -19,6 +19,8 @@ export default function UserProfile() {
     profileImage: null,
   });
   const [imagePreview, setImagePreview] = useState(null);
+  const [updating, setUpdating] = useState(false);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
 
   // 🔥 FETCH USER & BOOKS
   useEffect(() => {
@@ -60,10 +62,41 @@ export default function UserProfile() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Update profile logic
-    setEditMode(false);
+    setUpdating(true);
+    setUpdateSuccess(false);
+
+    const data = new FormData();
+    data.append("name", formData.name);
+    data.append("bio", formData.bio);
+    if (formData.profileImage) {
+      data.append("profileImage", formData.profileImage);
+    }
+
+    try {
+      const res = await axios.put(
+        `${process.env.NEXT_PUBLIC_BOOK_URL}/api/updateProfile`,
+        data,
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      if (res.data.success) {
+        setUser(res.data.user);
+        setUpdateSuccess(true);
+        setTimeout(() => setUpdateSuccess(false), 3000);
+        setEditMode(false);
+        setImagePreview(null);
+      }
+    } catch (err) {
+      console.error("Profile update error:", err.response?.data?.message || err.message);
+      alert("Failed to update profile. Please try again.");
+    } finally {
+      setUpdating(false);
+    }
   };
 
   if (loading) {
@@ -132,13 +165,34 @@ export default function UserProfile() {
                       className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 outline-none resize-none"
                       placeholder="Write a short bio..."
                     />
-                    <div className="flex gap-2">
-                      <button type="button" onClick={() => setEditMode(false)} className="flex-1 py-2 text-xs font-medium border border-slate-300 rounded-lg hover:bg-slate-50">Cancel</button>
-                      <button type="submit" className="flex-1 py-2 text-xs font-medium bg-slate-800 text-white rounded-lg hover:bg-slate-900">Save</button>
+                    <div className="flex gap-2 pt-2">
+                      <button
+                        type="button"
+                        onClick={() => { setEditMode(false); setImagePreview(null); }}
+                        className="flex-1 py-2 text-xs font-semibold border border-slate-200 rounded-xl hover:bg-slate-50 transition"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={updating}
+                        className="flex-1 py-2 text-xs font-black bg-blue-600 text-white rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-100 transition disabled:opacity-50"
+                      >
+                        {updating ? "Saving..." : "Save Changes"}
+                      </button>
                     </div>
                   </form>
                 )}
               </div>
+
+              {/* Success Notification */}
+              {updateSuccess && (
+                <div className="px-6 pb-4 animate-in slide-in-from-top duration-300">
+                  <div className="bg-green-50 text-green-700 text-[10px] font-black uppercase tracking-widest p-2 rounded-lg text-center border border-green-100">
+                    Profile Updated Successfully!
+                  </div>
+                </div>
+              )}
 
               {/* About */}
               <div className="p-6 bg-slate-50/50">
@@ -174,57 +228,56 @@ export default function UserProfile() {
               <div className="p-6">
                 {myBooks.length > 0 ? (
                   <div className="flex gap-4 overflow-x-auto pb-4 scroll-smooth scrollbar-hide">
-  {myBooks.map((book) => (
-    <div
-      key={book._id}
-      className="group flex-shrink-0 w-[220px] sm:w-[240px] md:w-[260px] lg:w-[280px] bg-white border border-slate-200 rounded-lg overflow-hidden hover:shadow-md transition"
-    >
-      <div className="relative aspect-[3/4] bg-slate-100 overflow-hidden">
-        <img
-          src={book.bookImage || "/placeholder.png"}
-          alt={book.title}
-          className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
-        <span className="absolute top-2 left-2 px-2 py-1 bg-white/90 text-[10px] font-semibold text-slate-700 rounded-md shadow-sm">
-          {book.category || "Unknown"}
-        </span>
-      </div>
+                    {myBooks.map((book) => (
+                      <div
+                        key={book._id}
+                        className="group flex-shrink-0 w-[220px] sm:w-[240px] md:w-[260px] lg:w-[280px] bg-white border border-slate-200 rounded-lg overflow-hidden hover:shadow-md transition"
+                      >
+                        <div className="relative aspect-[3/4] bg-slate-100 overflow-hidden">
+                          <img
+                            src={book.bookImage || "/placeholder.png"}
+                            alt={book.title}
+                            className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                          <span className="absolute top-2 left-2 px-2 py-1 bg-white/90 text-[10px] font-semibold text-slate-700 rounded-md shadow-sm">
+                            {book.category || "Unknown"}
+                          </span>
+                        </div>
 
-      <div className="p-3 flex flex-col h-full">
-        <h3
-          className="text-sm font-bold text-slate-900 line-clamp-1 mb-1"
-          title={book.title}
-        >
-          {book.title}
-        </h3>
+                        <div className="p-3 flex flex-col h-full">
+                          <h3
+                            className="text-sm font-bold text-slate-900 line-clamp-1 mb-1"
+                            title={book.title}
+                          >
+                            {book.title}
+                          </h3>
 
-        <p className="text-xs text-slate-500 mb-1">
-          {book.author || "Unknown Author"}
-        </p>
+                          <p className="text-xs text-slate-500 mb-1">
+                            {book.author || "Unknown Author"}
+                          </p>
 
-        <p className="text-xs text-slate-500 mb-3 line-clamp-2">
-          {book.description || ""}
-        </p>
+                          <p className="text-xs text-slate-500 mb-3 line-clamp-2">
+                            {book.description || ""}
+                          </p>
 
-        <div className="mt-auto flex items-center justify-between">
-          <span className="text-sm font-bold text-slate-800">
-            ₹{book.price}
-          </span>
+                          <div className="mt-auto flex items-center justify-between">
+                            <span className="text-sm font-bold text-slate-800">
+                              ₹{book.price}
+                            </span>
 
-          <span
-            className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
-              book.condition?.toLowerCase() === "new"
-                ? "bg-emerald-100 text-emerald-700"
-                : "bg-amber-100 text-amber-700"
-            }`}
-          >
-            {book.condition || "Unknown"}
-          </span>
-        </div>
-      </div>
-    </div>
-  ))}
-</div>
+                            <span
+                              className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${book.condition?.toLowerCase() === "new"
+                                  ? "bg-emerald-100 text-emerald-700"
+                                  : "bg-amber-100 text-amber-700"
+                                }`}
+                            >
+                              {book.condition || "Unknown"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
 
                 ) : (
                   <div className="flex flex-col items-center justify-center py-12 text-center">

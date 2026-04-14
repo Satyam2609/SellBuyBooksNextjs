@@ -3,8 +3,10 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { ShoppingBagIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
+import { useAuth } from "../AuthProvider";
 
 export default function HomePageCart() {
+  const { setcount } = useAuth();
   const [booksData, setBooksData] = useState([]);
   const [popup, setPopup] = useState(false);
 
@@ -31,6 +33,7 @@ export default function HomePageCart() {
         { withCredentials: true }
       );
       console.log("Added to cart", res.data);
+      setcount((prev) => prev + 1);
       setPopup(true);
     } catch (error) {
       console.log("Error adding to cart:", error.response?.data?.message || error.message);
@@ -137,13 +140,13 @@ export default function HomePageCart() {
 
             <div className="flex items-center gap-2 mt-3">
               <span className="text-lg font-bold text-gray-900">
-                ₹{book.discountPrice}
+                ₹{book.originalPrice}
               </span>
 
               {book.originalPrice && (
                 <>
                   <span className="text-sm text-gray-400 line-through">
-                    ₹{book.originalPrice}
+                    ₹{book.discountPrice}
                   </span>
                  
                 </>
