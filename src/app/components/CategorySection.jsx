@@ -6,11 +6,11 @@ import Link from "next/link";
 import { Calculator, Beaker, BookOpen, GraduationCap, Ghost, Search } from "lucide-react";
 
 const HOME_CATEGORIES = [
-    { id: "maths", name: "Maths", icon: Calculator, color: "bg-blue-50 text-blue-600", border: "border-blue-100" },
-    { id: "science", name: "Science", icon: Beaker, color: "bg-green-50 text-green-600", border: "border-green-100" },
-    { id: "literature", name: "Literature", icon: BookOpen, color: "bg-purple-50 text-purple-600", border: "border-purple-100" },
-    { id: "fantasy", name: "Fantasy", icon: Ghost, color: "bg-pink-50 text-pink-600", border: "border-pink-100" },
-    { id: "entrance", name: "Entrance Exam", icon: GraduationCap, color: "bg-orange-50 text-orange-600", border: "border-orange-100" },
+    { id: "medical", name: "Medical", icon: Beaker, color: "bg-blue-50 text-blue-600", border: "border-blue-100" },
+    { id: "engineering", name: "Engineering", icon: GraduationCap, color: "bg-green-50 text-green-600", border: "border-green-100" },
+    { id: "comedy", name: "Comedy", icon: Ghost, color: "bg-purple-50 text-purple-600", border: "border-purple-100" },
+    { id: "fantasy", name: "Fantasy", icon: BookOpen, color: "bg-pink-50 text-pink-600", border: "border-pink-100" },
+    { id: "all", name: "All Books", icon: Search, color: "bg-orange-50 text-orange-600", border: "border-orange-100" },
 ];
 
 export default function CategorySection() {

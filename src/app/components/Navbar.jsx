@@ -80,7 +80,6 @@ export default function Navbar() {
             <nav className="hidden lg:flex items-center gap-6 ml-4">
               {[
                 { name: 'Home', href: '/' },
-                { name: 'Categories', href: '/Categories' },
                 { name: 'Old Books', href: '/OldBooks' },
                 { name: 'Sell Books', href: '/SellOldBook' },
                 { name: 'AI Expert', href: '/BookReccomendation' },

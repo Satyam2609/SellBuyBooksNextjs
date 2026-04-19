@@ -3,23 +3,23 @@
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { ShoppingBagIcon, CheckCircleIcon, Calculator, Beaker, BookOpen, GraduationCap, Ghost } from "lucide-react";
+import { ShoppingBagIcon, CheckCircleIcon, Calculator, Beaker, BookOpen, GraduationCap, Ghost, Search } from "lucide-react";
 import { useAuth } from "../AuthProvider";
 import { useSearchParams } from "next/navigation";
 import axios from "axios";
 import { Suspense } from "react";
 
 const CATEGORIES = [
-    { id: "maths", name: "Maths", icon: Calculator, color: "from-blue-500 to-cyan-500" },
-    { id: "science", name: "Science", icon: Beaker, color: "from-green-500 to-emerald-500" },
-    { id: "literature", name: "Literature", icon: BookOpen, color: "from-purple-500 to-pink-500" },
-    { id: "fantasy", name: "Fantasy", icon: Ghost, color: "from-pink-500 to-rose-500" },
-    { id: "entrance", name: "Entrance Exam", icon: GraduationCap, color: "from-orange-500 to-red-500" },
+    { id: "medical", name: "Medical", icon: Beaker, color: "from-blue-500 to-cyan-500" },
+    { id: "engineering", name: "Engineering", icon: GraduationCap, color: "from-green-500 to-emerald-500" },
+    { id: "comedy", name: "Comedy", icon: Ghost, color: "from-purple-500 to-pink-500" },
+    { id: "fantasy", name: "Fantasy", icon: BookOpen, color: "from-pink-500 to-rose-500" },
+    { id: "all", name: "All Books", icon: Search, color: "from-orange-500 to-red-500" },
 ];
 
 function CategoriesContent() {
     const searchParams = useSearchParams();
-    const initialCat = searchParams.get("cat") || "maths";
+    const initialCat = searchParams.get("cat") || "medical";
     const [selectedCategory, setSelectedCategory] = useState(initialCat);
     const [booksData, setBooksData] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -37,7 +37,8 @@ function CategoriesContent() {
         const fetchBooks = async () => {
             setLoading(true);
             try {
-                const res = await axios.get(`${process.env.NEXT_PUBLIC_BOOK_URL}/api/searchBooks?q=${selectedCategory}`, {
+                const query = selectedCategory === "all" ? "" : selectedCategory;
+                const res = await axios.get(`${process.env.NEXT_PUBLIC_BOOK_URL}/api/searchBooks?q=${query}`, {
                     withCredentials: true
                 });
                 if (res.data.success) {
@@ -74,7 +75,7 @@ function CategoriesContent() {
         <div className="min-h-screen bg-gray-50 text-gray-900">
             <Navbar />
 
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <main className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 {/* Hero Section */}
                 <div className="text-center mb-12">
                     <h1 className="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-green-600 to-teal-500 bg-clip-text text-transparent mb-4">
@@ -97,7 +98,7 @@ function CategoriesContent() {
                                 className={`
                   flex items-center gap-3 px-6 py-3 rounded-full font-semibold transition-all duration-300
                   ${isActive
-                                        ? `bg-gradient-to-r ${cat.color} text-white shadow-lg scale-105`
+                                        ? `bg-green-400`
                                         : "bg-white text-gray-600 hover:bg-gray-100 shadow-sm"}
                 `}
                             >
@@ -126,7 +127,7 @@ function CategoriesContent() {
                                         <img
                                             src={book.image || book.bookImage}
                                             alt={book.title}
-                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                            className="w-full h-full object-cover "
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
                                             <button
@@ -190,5 +191,17 @@ function CategoriesContent() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function CategoriesPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
+            </div>
+        }>
+            <CategoriesContent />
+        </Suspense>
     );
 }
