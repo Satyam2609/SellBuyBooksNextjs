@@ -20,8 +20,7 @@ const navigation = [
   { name: 'Dashboard', icon: HomeIcon, href: '#', current: true },
   { name: 'Accounts', icon: UsersIcon, href: '#', current: false },
   { name: 'Books Management', icon: BookOpenIcon, href: '#', current: false },
-  { name: 'Analytics', icon: ChartBarIcon, href: '#', current: false },
-  { name: 'Settings', icon: Cog6ToothIcon, href: '#', current: false },
+  { name: 'Analytics', icon: ChartBarIcon, href: '#', current: false }
 ];
 
 function classNames(...classes) {
