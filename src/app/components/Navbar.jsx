@@ -162,9 +162,6 @@ export default function Navbar() {
                       <Link href="/Profile" className="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
                         Profile
                       </Link>
-                      <Link href="/add-books" className="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                        Your Books
-                      </Link>
                     </div>
 
                     <div className="py-1 border-t border-gray-50">

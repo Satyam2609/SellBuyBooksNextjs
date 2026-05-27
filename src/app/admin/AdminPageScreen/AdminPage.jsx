@@ -198,10 +198,7 @@ export default function AdminPage() {
                     <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Overview</h1>
                     <p className="text-sm text-slate-500 mt-1">Global performance metrics for today.</p>
                   </div>
-                  <div className="flex space-x-3">
-                    <button className="px-4 py-2 border border-slate-300 text-sm font-medium rounded-lg bg-white hover:bg-slate-50 shadow-sm transition-colors">Export</button>
-                    <button className="px-4 py-2 text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition-colors">Add New Book</button>
-                  </div>
+                 
                 </div>
 
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">

@@ -83,9 +83,6 @@ export default function BookManage() {
 
   const STAT_CARDS = [
     { label: "Total Books", value: stats.totalBooks, icon: Book, color: "text-blue-600", bg: "bg-blue-50" },
-    { label: "Engineering", value: stats.engineering, icon: GraduationCap, color: "text-purple-600", bg: "bg-purple-50" },
-    { label: "Medical", value: stats.medical, icon: Heart, color: "text-red-600", bg: "bg-red-50" },
-    { label: "User Listed", value: stats.userListed, icon: ShoppingBag, color: "text-green-600", bg: "bg-green-50" },
   ];
 
   if (loading) {
